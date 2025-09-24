@@ -1,1 +1,1 @@
-export * from './ui/ShiftDetailsScreen'
+export * from './ui/shift-details-screen';

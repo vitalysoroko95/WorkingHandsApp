@@ -1,15 +1,11 @@
 import { Location } from '../../../shared/types';
+import { AuthorizationResult } from 'react-native-geolocation-service';
 
 export interface LocationQueryData {
-  location: Location | null;
+  location: Location | undefined;
   hasPermission: boolean;
-  permissionStatus: 'granted' | 'denied' | 'restricted' | 'unknown';
+  permissionStatus: AuthorizationResult;
   lastUpdated: number;
 }
 
-export interface GeolocationPermissionStatus {
-  granted: boolean;
-  denied: boolean;
-  restricted: boolean;
-  requestInProgress: boolean;
-}
+export type LocationButtonAction = 'request' | 'retry';

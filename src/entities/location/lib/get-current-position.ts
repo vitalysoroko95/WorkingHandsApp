@@ -1,26 +1,28 @@
-import { PermissionStatus, Platform, PermissionsAndroid } from "react-native";
-import Geolocation, { AuthorizationResult  } from "react-native-geolocation-service";
-import { Location } from "../../../shared/types";
-import { LocationQueryData } from "../model/types";
+import { Platform, PermissionsAndroid } from 'react-native';
+import Geolocation, {
+  AuthorizationResult,
+} from 'react-native-geolocation-service';
+import { Location } from '@/shared/types';
+import { LocationQueryData } from '../model/types';
 
-
-const requestLocationPermission = async (): Promise<AuthorizationResult | PermissionStatus> => {
+const requestLocationPermission = async (): Promise<AuthorizationResult> => {
   try {
     if (Platform.OS === 'ios') {
-      return await Geolocation.requestAuthorization('whenInUse');
-       
+      const status = await Geolocation.requestAuthorization('whenInUse');
+      return status;
     } else {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
           title: 'Доступ к геолокации',
-          message: 'Приложению нужен доступ к вашему местоположению для поиска смен рядом с вами.',
+          message:
+            'Приложению нужен доступ к вашему местоположению для поиска смен рядом с вами.',
           buttonNeutral: 'Спросить позже',
           buttonNegative: 'Отмена',
           buttonPositive: 'Разрешить',
         },
       );
-      
+
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         return 'granted';
       } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
@@ -36,30 +38,23 @@ const requestLocationPermission = async (): Promise<AuthorizationResult | Permis
 
 export const getCurrentPosition = async (): Promise<LocationQueryData> => {
   const permissionStatus = await requestLocationPermission();
-  
-  const normalizedStatus = 
-    permissionStatus === 'granted' ? 'granted' :
-    permissionStatus === 'denied' ? 'denied' :
-    permissionStatus === 'restricted' || permissionStatus === 'never_ask_again' ? 'restricted' :
-    'unknown';
-  
-  if (normalizedStatus !== 'granted') {
+
+  if (permissionStatus !== 'granted') {
     return {
-      location: null,
+      location: undefined,
       hasPermission: false,
-      permissionStatus: normalizedStatus,
+      permissionStatus,
       lastUpdated: Date.now(),
     };
   }
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     Geolocation.getCurrentPosition(
-      (position) => {
+      position => {
         const location: Location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         };
-        
         resolve({
           location,
           hasPermission: true,
@@ -67,20 +62,20 @@ export const getCurrentPosition = async (): Promise<LocationQueryData> => {
           lastUpdated: Date.now(),
         });
       },
-      (error) => {
-        console.error('Geolocation error:', error);
-        resolve({
-          location: null,
+      error => {
+        reject({
+          location: undefined,
           hasPermission: true,
           permissionStatus: 'granted',
           lastUpdated: Date.now(),
+          error: error.message,
         });
       },
       {
         enableHighAccuracy: true,
         timeout: 15000,
         maximumAge: 10000,
-      }
+      },
     );
   });
 };

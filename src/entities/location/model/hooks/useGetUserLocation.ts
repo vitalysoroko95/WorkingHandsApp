@@ -1,46 +1,56 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { Location } from '@/shared/types';
 
-import { locationGettingsOptions } from '../location';
-import { GeolocationPermissionStatus } from '../types';
-import { showLocationSettingsAlert } from '../../lib/show-location-settings-alert';
-
-
+import { LocationQueryData, LocationButtonAction } from '../types';
+import { getCurrentPosition } from '../../lib/get-current-position';
 
 export const useGetUserLocation = () => {
-  const { data, isLoading, error, refetch } = useQuery({
-    ...locationGettingsOptions,
-    staleTime: 1000 * 60 * 60,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  const [locationData, setLocationData] = useState<LocationQueryData | null>(
+    null,
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const shouldShowLocationButton = 
-    data?.permissionStatus === 'denied' || 
-    data?.permissionStatus === 'restricted' ||
-    (!!error && !isLoading);
+  const fetchLocation = async () => {
+    setIsLoading(true);
+    setError(null);
 
-  const permissionStatus: GeolocationPermissionStatus = {
-    granted: data?.permissionStatus === 'granted' || false,
-    denied: data?.permissionStatus === 'denied' || false,
-    restricted: data?.permissionStatus === 'restricted' || false,
-    requestInProgress: isLoading,
+    try {
+      const result = await getCurrentPosition();
+      setLocationData(result);
+    } catch {
+      setError('Ошибка получения геолокации');
+      setLocationData(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchLocation();
+  }, []);
+
+  const shouldShowLocationButton = !locationData?.location;
+
   const getCurrentLocation = async (): Promise<Location | undefined> => {
-    const result = await refetch();
-    return result.data?.location || undefined;
+    await fetchLocation();
+    return locationData?.location || undefined;
+  };
+
+  const getLocationButtonAction = (): LocationButtonAction => {
+    if (!locationData?.hasPermission) return 'request';
+    return 'retry';
   };
 
   return {
-    location: data?.location || undefined,
-    loading: isLoading,
-    error: error ? (error instanceof Error ? error.message : 'Ошибка получения геолокации') : null,
-    permissionStatus,
+    location: locationData?.location || undefined,
+    error,
+    permissionStatus: locationData?.permissionStatus,
+    hasPermission: locationData?.hasPermission || false,
+    isLoading,
     shouldShowLocationButton,
+    locationButtonAction: getLocationButtonAction(),
     getCurrentLocation,
-    refreshLocation: () => refetch(),
-    showLocationSettingsAlert,
+    refreshLocation: fetchLocation,
   };
 };

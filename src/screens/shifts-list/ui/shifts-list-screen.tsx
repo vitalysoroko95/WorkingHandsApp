@@ -4,7 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/shared/types';
 import { LocationRequestButton } from '@/features/location-request-button/ui/LocationRequestButton';
 import { useGetUserLocation } from '@/entities/location/model/hooks/useGetUserLocation';
-import { ShiftsSearchList } from '@/features/shift-search';
+import { ShiftsSearchList } from '@/features/shift-search/ui/shifts-search-list';
 
 type ShiftsListNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -35,7 +35,7 @@ export const ShiftsListScreen: React.FC<ShiftsListPageProps> = ({
       <View style={styles.locationContainer}>
         <LocationRequestButton onError={handleLocationError} />
       </View>
-      <ShiftsSearchList location={location} />
+      {location && <ShiftsSearchList location={location} />}
     </View>
   );
 };

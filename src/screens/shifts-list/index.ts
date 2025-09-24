@@ -1,1 +1,1 @@
-export { ShiftsListScreen }  from './ui/ShiftsListScreen'
+export { ShiftsListScreen } from './ui/shifts-list-screen';

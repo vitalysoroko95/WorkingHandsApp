@@ -1,5 +1,5 @@
-import { GeolocationPermissionStatus } from '@/entities/location';
 import { useGetUserLocation } from '@/entities/location/model/hooks/useGetUserLocation';
+import { LocationButtonAction } from '@/entities/location/model/types';
 import React, { useEffect } from 'react';
 import {
   View,
@@ -13,29 +13,25 @@ interface LocationRequestButtonProps {
   onError?: (error: string) => void;
 }
 
-const getButtonText = (
-  permissionStatus: GeolocationPermissionStatus,
-  error: unknown,
-) => {
-  if (permissionStatus.denied || permissionStatus.restricted) {
-    return 'Разрешить доступ к геолокации';
+const getButtonText = (locationButtonAction: LocationButtonAction) => {
+  switch (locationButtonAction) {
+    case 'retry':
+      return 'Повторить попытку';
+    case 'request':
+    default:
+      return 'Определить местоположение';
   }
-  if (error) {
-    return 'Повторить попытку';
-  }
-  return 'Определить местоположение';
 };
 
 export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
   onError,
 }) => {
   const {
-    loading,
+    isLoading,
     error,
-    permissionStatus,
     shouldShowLocationButton,
+    locationButtonAction,
     refreshLocation,
-    showLocationSettingsAlert,
   } = useGetUserLocation();
 
   useEffect(() => {
@@ -45,20 +41,13 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
   }, [error, onError]);
 
   const getButtonStyle = () => {
-    if (loading) return [styles.button, styles.buttonLoading];
+    if (isLoading) return [styles.button, styles.buttonLoading];
     if (error) return [styles.button, styles.buttonError];
-    if (permissionStatus.denied || permissionStatus.restricted) {
-      return [styles.button, styles.buttonError];
-    }
     return styles.button;
   };
 
   const handlePress = () => {
-    if (permissionStatus.denied || permissionStatus.restricted) {
-      showLocationSettingsAlert();
-    } else {
-      refreshLocation();
-    }
+    refreshLocation();
   };
 
   if (!shouldShowLocationButton) {
@@ -67,19 +56,19 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={getButtonStyle()}
-        onPress={handlePress}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#ffffff" size="small" />
-        ) : (
+      {isLoading ? (
+        <ActivityIndicator color="#ffffff" size="small" />
+      ) : (
+        <TouchableOpacity
+          style={getButtonStyle()}
+          onPress={handlePress}
+          disabled={isLoading}
+        >
           <Text style={styles.buttonText}>
-            {getButtonText(permissionStatus, error)}
+            {getButtonText(locationButtonAction)}
           </Text>
-        )}
-      </TouchableOpacity>
+        </TouchableOpacity>
+      )}
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
