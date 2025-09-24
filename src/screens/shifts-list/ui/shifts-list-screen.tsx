@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/shared/types';
 import { LocationRequestButton } from '@/features/location-request-button/ui/LocationRequestButton';
@@ -18,7 +18,7 @@ interface ShiftsListPageProps {
 export const ShiftsListScreen: React.FC<ShiftsListPageProps> = ({
   navigation,
 }) => {
-  const { location } = useGetUserLocation();
+  const { location, isLoading } = useGetUserLocation();
 
   const handleLocationError = (error: string) => {
     Alert.alert('Ошибка геолокации', error, [{ text: 'OK' }]);
@@ -33,7 +33,11 @@ export const ShiftsListScreen: React.FC<ShiftsListPageProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.locationContainer}>
-        <LocationRequestButton onError={handleLocationError} />
+        {isLoading ? (
+          <ActivityIndicator color="#ffffff" size="small" />
+        ) : (
+          <LocationRequestButton onError={handleLocationError} />
+        )}
       </View>
       {location && <ShiftsSearchList location={location} />}
     </View>

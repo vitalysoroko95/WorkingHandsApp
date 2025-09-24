@@ -1,13 +1,7 @@
 import { useGetUserLocation } from '@/entities/location/model/hooks/useGetUserLocation';
 import { LocationButtonAction } from '@/entities/location/model/types';
 import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface LocationRequestButtonProps {
   onError?: (error: string) => void;
@@ -56,19 +50,15 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator color="#ffffff" size="small" />
-      ) : (
-        <TouchableOpacity
-          style={getButtonStyle()}
-          onPress={handlePress}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText}>
-            {getButtonText(locationButtonAction)}
-          </Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={getButtonStyle()}
+        onPress={handlePress}
+        disabled={isLoading}
+      >
+        <Text style={styles.buttonText}>
+          {getButtonText(locationButtonAction)}
+        </Text>
+      </TouchableOpacity>
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );

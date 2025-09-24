@@ -1,16 +1,14 @@
 export type RootStackParamList = {
   ShiftsList: undefined;
   ShiftDetails: {
-    id: string;
+    shift: Shift;
   };
 };
-
 
 export interface Location {
   latitude: number;
   longitude: number;
 }
-
 
 export type WorkType = {
   id: number;
@@ -18,7 +16,7 @@ export type WorkType = {
   nameGt5: string;
   nameLt5: string;
   nameOne: string;
-}
+};
 
 export type Shift = {
   id: string;
@@ -37,4 +35,4 @@ export type Shift = {
   customerFeedbacksCount: string;
   customerRating: number | null;
   isPromotionEnabled: boolean;
-}
+};

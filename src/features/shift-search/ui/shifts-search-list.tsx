@@ -12,21 +12,23 @@ import { Location, Shift } from '../../../shared/types';
 import { useQuery } from '@tanstack/react-query';
 import { shiftsModel } from '@/entities/shifts';
 import { ShiftCard } from './shift-card';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '@/shared/types';
 
 interface ShiftsSearchListProps {
   location: Location | undefined;
-  onShiftPress?: (shift: Shift) => void;
 }
 
 export const ShiftsSearchList: React.FC<ShiftsSearchListProps> = ({
   location,
-  onShiftPress,
 }) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { data, isLoading, error, refetch, isFetching } = useQuery({
     ...shiftsModel.getShiftsListOptions(location!),
     enabled: Boolean(location),
   });
-
+ 
   if (!location) return null;
 
   if (isLoading) {
@@ -56,7 +58,10 @@ export const ShiftsSearchList: React.FC<ShiftsSearchListProps> = ({
       </View>
     );
   }
-
+  const onShiftPress = (shift: Shift) => {
+    navigation.navigate('ShiftDetails', { shift });
+  };
+  
   return (
     <FlatList<Shift>
       data={data}
