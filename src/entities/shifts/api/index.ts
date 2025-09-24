@@ -1,0 +1,1 @@
+export { getShiftsList } from './operation';

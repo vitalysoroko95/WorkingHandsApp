@@ -2,6 +2,8 @@
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
     "baseUrl": "./",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "paths": {
       "@/*": [
         "./src/*"

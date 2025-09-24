@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Alert, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/shared/types';
 import { LocationRequestButton } from '@/features/location-request-button/ui/LocationRequestButton';
 import { useGetUserLocation } from '@/entities/location/model/hooks/useGetUserLocation';
+import { useQuery } from '@tanstack/react-query';
+import { shiftsModel } from '@/entities/shifts';
 
 type ShiftsListNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -18,6 +20,11 @@ export const ShiftsListScreen: React.FC<ShiftsListPageProps> = ({
   navigation,
 }) => {
   const { location } = useGetUserLocation();
+
+  const { data, isFetching, isLoading } = useQuery({
+    ...shiftsModel.getShiftsListOptions(location!),
+    enabled: !location,
+  });
 
   const handleLocationError = (error: string) => {
     Alert.alert('Ошибка геолокации', error, [{ text: 'OK' }]);

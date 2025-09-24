@@ -12,7 +12,7 @@ export interface Location {
 }
 
 
-export interface WorkType {
+export type WorkType = {
   id: number;
   name: string;
   nameGt5: string;
@@ -20,7 +20,7 @@ export interface WorkType {
   nameOne: string;
 }
 
-export interface ShiftBrief {
+export type Shift = {
   id: string;
   logo: string;
   coordinates: Location;

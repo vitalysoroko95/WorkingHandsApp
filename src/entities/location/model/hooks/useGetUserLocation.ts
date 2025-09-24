@@ -28,13 +28,13 @@ export const useGetUserLocation = () => {
     requestInProgress: isLoading,
   };
 
-  const getCurrentLocation = async (): Promise<Location | null> => {
+  const getCurrentLocation = async (): Promise<Location | undefined> => {
     const result = await refetch();
-    return result.data?.location || null;
+    return result.data?.location || undefined;
   };
 
   return {
-    location: data?.location || null,
+    location: data?.location || undefined,
     loading: isLoading,
     error: error ? (error instanceof Error ? error.message : 'Ошибка получения геолокации') : null,
     permissionStatus,
