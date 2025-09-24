@@ -7,6 +7,6 @@ export async function getShiftsList(
   if (!params) {
     return [];
   }
-  console.log('work');
+
   return Promise.resolve(response);
 }

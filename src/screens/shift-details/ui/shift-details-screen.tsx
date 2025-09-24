@@ -86,10 +86,12 @@ export const ShiftDetailsScreen: React.FC<ShiftDetailsPageProps> = ({
           {shift.customerRating && (
             <View style={styles.infoRow}>
               <Text style={styles.label}>Рейтинг:</Text>
-              <Text style={styles.value}>
+              <View style={styles.centeredRow}>
                 <Star size={15} color="#ffe603ff" />
-                {shift.customerRating} ({shift.customerFeedbacksCount})
-              </Text>
+                <Text style={styles.value}>
+                  {shift.customerRating} ({shift.customerFeedbacksCount})
+                </Text>
+              </View>
             </View>
           )}
         </View>
@@ -131,6 +133,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+
+  centeredRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 18,

@@ -30,7 +30,7 @@ export const useGetUserLocation = () => {
     fetchLocation();
   }, []);
 
-  const shouldShowLocationButton = !locationData?.location;
+  const shouldShowLocationButton = !locationData?.location && error;
 
   const getCurrentLocation = async (): Promise<Location | undefined> => {
     await fetchLocation();

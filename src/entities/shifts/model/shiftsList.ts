@@ -18,6 +18,7 @@ export function getShiftsListOptions(
     queryKey: getShiftsListKey(location),
     queryFn: async ({ queryKey }) => {
       const [, latitude, longitude] = queryKey;
+
       return shiftsApi.getShiftsList({ latitude, longitude });
     },
     staleTime: 5 * 60 * 1000,

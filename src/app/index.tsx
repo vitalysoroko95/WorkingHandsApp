@@ -1,20 +1,15 @@
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 
 import { AppNavigator } from './navigation/AppNavigator';
-import { persister, queryClient } from '../shared/config';
+import { queryClient } from '../shared/config';
+import { QueryClientProvider } from '@tanstack/react-query';
 
 export const App: React.FC = () => {
   return (
     <SafeAreaProvider>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{
-          persister,
-        }}
-      >
+      <QueryClientProvider client={queryClient}>
         <AppNavigator />
-      </PersistQueryClientProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 };

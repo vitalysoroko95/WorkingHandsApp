@@ -1,11 +1,13 @@
 import { useGetUserLocation } from '@/entities/location/model/hooks/useGetUserLocation';
 import { LocationButtonAction } from '@/entities/location/model/types';
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-
-interface LocationRequestButtonProps {
-  onError?: (error: string) => void;
-}
+import React from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 
 const getButtonText = (locationButtonAction: LocationButtonAction) => {
   switch (locationButtonAction) {
@@ -17,9 +19,7 @@ const getButtonText = (locationButtonAction: LocationButtonAction) => {
   }
 };
 
-export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
-  onError,
-}) => {
+export const LocationRequestButton: React.FC = () => {
   const {
     isLoading,
     error,
@@ -28,14 +28,7 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
     refreshLocation,
   } = useGetUserLocation();
 
-  useEffect(() => {
-    if (error) {
-      onError?.(error);
-    }
-  }, [error, onError]);
-
   const getButtonStyle = () => {
-    if (isLoading) return [styles.button, styles.buttonLoading];
     if (error) return [styles.button, styles.buttonError];
     return styles.button;
   };
@@ -44,12 +37,21 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
     refreshLocation();
   };
 
+  if (isLoading)
+    return (
+      <ActivityIndicator
+        style={styles.locationContainer}
+        color="#0088ffff"
+        size="large"
+      />
+    );
+
   if (!shouldShowLocationButton) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.locationContainer}>
       <TouchableOpacity
         style={getButtonStyle()}
         onPress={handlePress}
@@ -59,16 +61,20 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
           {getButtonText(locationButtonAction)}
         </Text>
       </TouchableOpacity>
+
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
+  locationContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
+    flexGrow: 1,
+    paddingVertical: 10,
   },
+
   button: {
     backgroundColor: '#007AFF',
     paddingHorizontal: 24,

@@ -28,14 +28,14 @@ export const ShiftsSearchList: React.FC<ShiftsSearchListProps> = ({
     ...shiftsModel.getShiftsListOptions(location!),
     enabled: Boolean(location),
   });
- 
-  if (!location) return null;
 
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#1f70c7ff" />
-        <Text style={styles.loadingText}>Загрузка смен...</Text>
+        <View>
+          <ActivityIndicator size="large" color="#1f70c7ff" />
+          <Text style={styles.loadingText}>Загрузка смен...</Text>
+        </View>
       </View>
     );
   }
@@ -61,7 +61,7 @@ export const ShiftsSearchList: React.FC<ShiftsSearchListProps> = ({
   const onShiftPress = (shift: Shift) => {
     navigation.navigate('ShiftDetails', { shift });
   };
-  
+
   return (
     <FlatList<Shift>
       data={data}
@@ -85,10 +85,10 @@ export const ShiftsSearchList: React.FC<ShiftsSearchListProps> = ({
 
 const styles = StyleSheet.create({
   centerContainer: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 8,
   },
   loadingText: {
     marginTop: 16,
@@ -111,12 +111,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#6C757D',
     fontWeight: '600',
-    textAlign: 'center',
-  },
-  emptyDetails: {
-    fontSize: 14,
-    color: '#6C757D',
-    marginTop: 8,
     textAlign: 'center',
   },
   listContainer: {
