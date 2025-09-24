@@ -1,3 +1,4 @@
+import { GeolocationPermissionStatus } from '@/entities/location';
 import { useGetUserLocation } from '@/entities/location/model/hooks/useGetUserLocation';
 import React, { useEffect } from 'react';
 import {
@@ -11,6 +12,19 @@ import {
 interface LocationRequestButtonProps {
   onError?: (error: string) => void;
 }
+
+const getButtonText = (
+  permissionStatus: GeolocationPermissionStatus,
+  error: unknown,
+) => {
+  if (permissionStatus.denied || permissionStatus.restricted) {
+    return 'Разрешить доступ к геолокации';
+  }
+  if (error) {
+    return 'Повторить попытку';
+  }
+  return 'Определить местоположение';
+};
 
 export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
   onError,
@@ -29,16 +43,6 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
       onError?.(error);
     }
   }, [error, onError]);
-
-  const getButtonText = () => {
-    if (permissionStatus.denied || permissionStatus.restricted) {
-      return 'Разрешить доступ к геолокации';
-    }
-    if (error) {
-      return 'Повторить попытку';
-    }
-    return 'Определить местоположение';
-  };
 
   const getButtonStyle = () => {
     if (loading) return [styles.button, styles.buttonLoading];
@@ -71,10 +75,11 @@ export const LocationRequestButton: React.FC<LocationRequestButtonProps> = ({
         {loading ? (
           <ActivityIndicator color="#ffffff" size="small" />
         ) : (
-          <Text style={styles.buttonText}>{getButtonText()}</Text>
+          <Text style={styles.buttonText}>
+            {getButtonText(permissionStatus, error)}
+          </Text>
         )}
       </TouchableOpacity>
-
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -98,9 +103,6 @@ const styles = StyleSheet.create({
   buttonLoading: {
     backgroundColor: '#6C757D',
   },
-  buttonSuccess: {
-    backgroundColor: '#28A745',
-  },
   buttonError: {
     backgroundColor: '#DC3545',
   },
@@ -112,12 +114,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#DC3545',
     fontSize: 14,
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  locationText: {
-    color: '#28A745',
-    fontSize: 12,
     marginTop: 8,
     textAlign: 'center',
   },

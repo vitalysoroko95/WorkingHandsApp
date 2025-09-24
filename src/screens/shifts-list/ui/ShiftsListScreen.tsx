@@ -17,7 +17,7 @@ interface ShiftsListPageProps {
 export const ShiftsListScreen: React.FC<ShiftsListPageProps> = ({
   navigation,
 }) => {
-  const { location, shouldShowLocationButton, loading } = useGetUserLocation();
+  const { location } = useGetUserLocation();
 
   const handleLocationError = (error: string) => {
     Alert.alert('Ошибка геолокации', error, [{ text: 'OK' }]);
@@ -31,25 +31,9 @@ export const ShiftsListScreen: React.FC<ShiftsListPageProps> = ({
 
   return (
     <View style={styles.container}>
-      {loading ? (
-        <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loaderText}>Определение местоположения...</Text>
-        </View>
-      ) : shouldShowLocationButton ? (
-        <View style={styles.locationContainer}>
-          <LocationRequestButton onError={handleLocationError} />
-        </View>
-      ) : (
-        <View style={styles.contentContainer}>
-          {location && (
-            <Text style={styles.statusText}>
-              Местоположение определено: {location.latitude.toFixed(4)},{' '}
-              {location.longitude.toFixed(4)}
-            </Text>
-          )}
-        </View>
-      )}
+      <View style={styles.locationContainer}>
+        <LocationRequestButton onError={handleLocationError} />
+      </View>
     </View>
   );
 };
